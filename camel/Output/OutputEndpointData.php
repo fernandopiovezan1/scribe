@@ -12,6 +12,7 @@ use Knuckles\Camel\Extraction\ResponseField;
 use Knuckles\Scribe\Extracting\Extractor;
 use Knuckles\Scribe\Tools\Utils as u;
 use Knuckles\Scribe\Tools\WritingUtils;
+use Vinkla\Hashids\Facades\Hashids;
 
 
 /**
@@ -109,6 +110,10 @@ class OutputEndpointData extends BaseDTO
         $this->nestedResponseFields = Extractor::nestArrayAndObjectFields($this->responseFields);
 
         $this->boundUri = u::getUrlWithBoundParameters($this->uri, $this->cleanUrlParameters);
+
+        if (!empty($this->cleanUrlParameters) && !empty($this->cleanUrlParameters['id'])) {
+            $this->cleanUrlParameters['id'] = Hashids::connection('main')->encodeHex($this->cleanUrlParameters['id']);
+        }
 
         [$files, $regularParameters] = static::splitIntoFileAndRegularParameters($this->cleanBodyParameters);
 

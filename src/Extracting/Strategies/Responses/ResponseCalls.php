@@ -20,6 +20,7 @@ use Knuckles\Scribe\Tools\ConsoleOutputUtils as c;
 use Knuckles\Scribe\Tools\ErrorHandlingUtils as e;
 use Knuckles\Scribe\Tools\Globals;
 use Knuckles\Scribe\Tools\Utils;
+use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * Make a call to the route and retrieve its response.
@@ -54,6 +55,9 @@ class ResponseCalls extends Strategy
         $queryParameters = array_merge($endpointData->cleanQueryParameters, $rulesToApply['queryParams'] ?? []);
         $urlParameters = $endpointData->cleanUrlParameters;
         $headers = $endpointData->headers;
+        if (!empty($urlParameters) && !empty($urlParameters['id'])) {
+            $urlParameters['id'] = Hashids::connection('main')->encodeHex($urlParameters['id']);
+        }
 
         if ($endpointData->auth) {
             [$where, $name, $value] = $endpointData->auth;
