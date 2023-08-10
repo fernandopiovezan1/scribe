@@ -109,11 +109,12 @@ class OutputEndpointData extends BaseDTO
         $this->nestedBodyParameters = Extractor::nestArrayAndObjectFields($this->bodyParameters, $this->cleanBodyParameters);
         $this->nestedResponseFields = Extractor::nestArrayAndObjectFields($this->responseFields);
 
-        $this->boundUri = u::getUrlWithBoundParameters($this->uri, $this->cleanUrlParameters);
-
         if (!empty($this->cleanUrlParameters) && !empty($this->cleanUrlParameters['id'])) {
             $this->cleanUrlParameters['id'] = Hashids::connection('main')->encodeHex($this->cleanUrlParameters['id']);
         }
+
+        $this->boundUri = u::getUrlWithBoundParameters($this->uri, $this->cleanUrlParameters);
+
 
         [$files, $regularParameters] = static::splitIntoFileAndRegularParameters($this->cleanBodyParameters);
 
